@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CakeRelease" Version="2.1.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    <PackageReference Include="Pixsys.Library.StyleCopAnalyzers" Version="1.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="C:\Users\Sylvain\.nuget\packages\pixsys.library.stylecopanalyzers\1.2.0\stylecop.json" Link="stylecop.json" />
+  </ItemGroup>
+</Project>
