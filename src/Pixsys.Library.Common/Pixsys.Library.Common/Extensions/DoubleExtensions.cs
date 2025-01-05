@@ -33,28 +33,10 @@ namespace Pixsys.Library.Common.Extensions
         /// <exception cref="FormatException">Impossible to parse current value.</exception>
         public static double ParseToDouble(this string value)
         {
-            /*
-             * Values currently supported:
-             * 9000
-             * 9,000
-             * 9,000.00
-             * 9 000
-             * 9 000,00
-             * 9 000.00
-             */
-
-            // Initial cleanup: Remove all types of spaces (including regular and non-breaking spaces)
+            // Step 1 : Initial cleanup: Remove all types of spaces (including regular and non-breaking spaces)
             value = new string(value.Where(c => !char.IsWhiteSpace(c)).ToArray());
 
-            // Try parsing with common cultures
-            if (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.CurrentCulture, out double result) ||
-                double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.GetCultureInfo("en-US"), out result) ||
-                double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
-            {
-                return result;
-            }
-
-            // Handle mixed formats (e.g., "9,000.00" or "9.000,00")
+            // Step 2 : Handle mixed formats (e.g., "9,000.00" or "9.000,00")
             if (value.Contains(',') && value.Contains('.'))
             {
                 // If the comma is before the dot, assume the comma is a thousands separator
@@ -74,8 +56,20 @@ namespace Pixsys.Library.Common.Extensions
                 value = value.Replace(",", ".");
             }
 
-            // Final attempt to parse after modifications
-            if (double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result))
+            // Step 3: Trying to parse with current culture
+            if (double.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out double result))
+            {
+                return result;
+            }
+
+            // Step 4: Trying to parse with alternative culture (US)
+            if (double.TryParse(value, NumberStyles.Number, CultureInfo.GetCultureInfo("en-US"), out result))
+            {
+                return result;
+            }
+
+            // Step 5: Trying to parse with InvariantCulture
+            if (double.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out result))
             {
                 return result;
             }
