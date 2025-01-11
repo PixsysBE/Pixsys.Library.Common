@@ -4,6 +4,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Pixsys.Library.Common.Models;
 using System.Globalization;
 
 namespace Pixsys.Library.Common.Extensions
@@ -234,6 +235,51 @@ namespace Pixsys.Library.Common.Extensions
         public static string ConvertToJavascriptDateUtc(this DateTime dateTime)
         {
             return $"Date.UTC({dateTime.Year}, {dateTime.Month - 1}, {dateTime.Day})";
+        }
+
+        /// <summary>
+        /// Calculates the difference between 2 dates.
+        /// </summary>
+        /// <param name="startDate">The start date.</param>
+        /// <param name="endDate">The end date.</param>
+        /// <returns>The difference in years, months, days, hours, minutes and seconds.</returns>
+        public static DateDifference CalculateDifference(this DateTime startDate, DateTime endDate)
+        {
+            if (startDate > endDate)
+            {
+                (endDate, startDate) = (startDate, endDate);
+            }
+
+            // Calcul initial des années, mois et jours
+            int years = endDate.Year - startDate.Year;
+            int months = endDate.Month - startDate.Month;
+            int days = endDate.Day - startDate.Day;
+
+            // Ajuster les mois et années si nécessaire
+            if (days < 0)
+            {
+                months--;
+                days += DateTime.DaysInMonth(startDate.Year, startDate.Month);
+            }
+
+            if (months < 0)
+            {
+                years--;
+                months += 12;
+            }
+
+            // Calcul des heures, minutes et secondes
+            TimeSpan timeDifference = endDate - startDate.AddYears(years).AddMonths(months).AddDays(days);
+
+            return new DateDifference
+            {
+                Years = years,
+                Months = months,
+                Days = days,
+                Hours = timeDifference.Hours,
+                Minutes = timeDifference.Minutes,
+                Seconds = timeDifference.Seconds,
+            };
         }
     }
 }
