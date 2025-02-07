@@ -65,5 +65,63 @@ namespace Pixsys.Library.Common.Extensions
             // If no conversion succeeded, throw a more specific exception
             throw new FormatException($"Impossible to parse current value into decimal: {value}");
         }
+
+        /// <summary>
+        /// Rounds up a Decimal value to a given number of decimal places.
+        /// </summary>
+        /// <param name="number">A decimal number to be rounded.</param>
+        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <returns>A number of fractional digits equals to decimal.</returns>
+        public static decimal RoundUp(this decimal number, int decimals)
+        {
+            decimal factor = decimals.GetRoundFactor();
+            number *= factor;
+            number = Math.Ceiling(number);
+            number /= factor;
+            return number;
+        }
+
+        /// <summary>
+        /// Rounds down a Decimal value to a given number of decimal places.
+        /// </summary>
+        /// <param name="number">A decimal number to be rounded.</param>
+        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <returns>A number of fractional digits equals to decimal.</returns>
+        public static decimal RoundDown(this decimal number, int decimals)
+        {
+            decimal factor = decimals.GetRoundFactor();
+            number *= factor;
+            number = Math.Floor(number);
+            number /= factor;
+            return number;
+        }
+
+        /// <summary>
+        /// A internal function to get the round factor.
+        /// </summary>
+        /// <param name="decimals">The number of decimal places in the return value.</param>
+        /// <returns>The round factor.</returns>
+        private static decimal GetRoundFactor(this int decimals)
+        {
+            decimal factor = 1m;
+
+            if (decimals < 0)
+            {
+                decimals = -decimals;
+                for (int i = 0; i < decimals; i++)
+                {
+                    factor /= 10m;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < decimals; i++)
+                {
+                    factor *= 10m;
+                }
+            }
+
+            return factor;
+        }
     }
 }
