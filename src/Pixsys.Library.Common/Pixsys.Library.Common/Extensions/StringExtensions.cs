@@ -226,7 +226,7 @@ namespace Pixsys.Library.Common.Extensions
             }
 
             string[] split = HtmlTagsRegex().Split(content);
-            string counter = string.Empty;
+            StringBuilder counter = new();
 
             foreach (string item in split)
             {
@@ -238,7 +238,7 @@ namespace Pixsys.Library.Common.Extensions
                     break;
                 }
 
-                counter += item;
+                _ = counter.Append(item);
             }
 
             Match x = TagRegex().Match(content, necessaryCount);
@@ -247,27 +247,24 @@ namespace Pixsys.Library.Common.Extensions
                 necessaryCount = x.Index + 1;
             }
 
-            string subs = content[..necessaryCount];
-            MatchCollection openTags = OpenTagsRegex().Matches(subs);
-            MatchCollection closeTags = CloseTagsRegex().Matches(subs);
+            StringBuilder subs = new(content[..necessaryCount]);
+            MatchCollection openTags = OpenTagsRegex().Matches(subs.ToString());
+            MatchCollection closeTags = CloseTagsRegex().Matches(subs.ToString());
 
             List<string> tags = [];
-            foreach (object? item in openTags)
+            foreach (Match? item in openTags.Where(item => item != null))
             {
-                if (item != null)
+                string? strItem = item.ToString();
+                if (!string.IsNullOrEmpty(strItem))
                 {
-                    string? strItem = item.ToString();
-                    if (!string.IsNullOrEmpty(strItem))
+                    string? trans = AttributeRegex().Match(strItem).Value;
+                    trans = $"</{trans.AsSpan(1, trans.Length - 1)}";
+                    if (trans[^1] != '>')
                     {
-                        string? trans = AttributeRegex().Match(strItem).Value;
-                        trans = $"</{trans.AsSpan(1, trans.Length - 1)}";
-                        if (trans[^1] != '>')
-                        {
-                            trans += ">";
-                        }
-
-                        tags.Add(trans);
+                        trans += ">";
                     }
+
+                    tags.Add(trans);
                 }
             }
 
@@ -280,18 +277,18 @@ namespace Pixsys.Library.Common.Extensions
             {
                 if (i == 0)
                 {
-                    subs += " ...";
+                    _ = subs.Append(" ...");
                 }
 
-                subs += tags[i];
+                _ = subs.Append(tags[i]);
             }
 
-            if (subs.Length < content.Length && !subs.Contains("..."))
+            if (subs.Length < content.Length && !subs.ToString().Contains("..."))
             {
-                subs += "...";
+                _ = subs.Append("...");
             }
 
-            return subs;
+            return subs.ToString();
         }
 
         /// <summary>

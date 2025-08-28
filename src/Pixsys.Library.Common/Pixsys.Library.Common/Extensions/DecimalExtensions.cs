@@ -22,7 +22,7 @@ namespace Pixsys.Library.Common.Extensions
         public static decimal ParseToDecimal(this string value)
         {
             // Step 1 : Initial cleanup: Remove all types of spaces (including regular and non-breaking spaces)
-            value = new string(value.Where(c => !char.IsWhiteSpace(c)).ToArray());
+            value = new string([.. value.Where(c => !char.IsWhiteSpace(c))]);
 
             // Step 2 : Handle mixed formats (e.g., "9,000.00" or "9.000,00")
             if (value.Contains(',') && value.Contains('.'))
