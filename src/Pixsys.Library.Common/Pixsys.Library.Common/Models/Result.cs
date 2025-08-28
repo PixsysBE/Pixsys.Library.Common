@@ -61,7 +61,7 @@ namespace Pixsys.Library.Common.Models
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns>The result.</returns>
-        public Result<T> Success(T value)
+        public Result<T> Success(T? value)
         {
             Message = string.Empty;
             Value = value;
@@ -75,7 +75,7 @@ namespace Pixsys.Library.Common.Models
         /// <param name="message">The message.</param>
         /// <param name="value">The value.</param>
         /// <returns>The result.</returns>
-        public Result<T> Failure(string message, T value)
+        public Result<T> Failure(string message, T? value)
         {
             Message = message;
             Value = value;
